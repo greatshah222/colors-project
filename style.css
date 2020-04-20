@@ -46,10 +46,10 @@ path,i,svg{
     width: 80%;
     border-bottom-left-radius:1rem ;
     border-bottom-right-radius:1rem ;
-    pointer-events: none;
-    opacity: 0;
+    /* pointer-events: none; */
+   /* opacity: 0; */
     /* adding a adjustment class*/
-    transform: translateY(100px);
+    /*transform: translateY(100px);*/
     transition:all 0.5s ease-in-out;
 }
 .controls{
@@ -112,4 +112,15 @@ path,i,svg{
     cursor: pointer;
     margin: 1.5rem 0rem;
 
+}
+/* Slider Stuff */
+input[type="range"]{
+
+    -webkit-appearance: none;
+    margin: 1rem 0rem ;
+    width: 100%;
+    position: relative;
+    cursor: pointer;
+    border-radius: 1rem;
+    
 }
