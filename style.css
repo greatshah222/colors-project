@@ -46,17 +46,17 @@ path,i,svg{
     width: 80%;
     border-bottom-left-radius:1rem ;
     border-bottom-right-radius:1rem ;
-    /* pointer-events: none; */
-   /* opacity: 0; */
+    pointer-events: none; 
+   opacity: 0;
     /* adding a adjustment class*/
-    /*transform: translateY(100px);*/
-    transition:all 0.5s ease-in-out;
+    transform: translateY(100px);
+    transition:all 0.5s ease-in-out; 
 }
 .controls{
     display: flex;
     flex-direction: column;
 }
-.sliders-active{
+.sliders.active{
     pointer-events: all;
     opacity: 1;
     transform: translate(0px);

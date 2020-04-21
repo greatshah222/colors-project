@@ -6,6 +6,11 @@ const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll('.color h2');
 const popup = document.querySelector('.copy-container');
 let initialColors;
+const adjustButtons = document.querySelectorAll('.adjust');
+const closeAdjustments = document.querySelectorAll('.close-adjustment');
+const sliderContainers = document.querySelectorAll('.sliders');
+const lockButtons = document.querySelectorAll('.lock');
+
 
 // event listener
 
@@ -31,6 +36,27 @@ popup.addEventListener('transitionend', () => {
     popupBox.classList.remove('active');
     popup.classList.remove('active');
 })
+
+adjustButtons.forEach((adjustButton, i) => {
+    adjustButton.addEventListener('click', () => {
+        openAdjustmentPanel(i);
+    })
+});
+closeAdjustments.forEach((closeAdjustment, i) => {
+    closeAdjustment.addEventListener('click', () => {
+        closeAdjustmentPanel(i);
+    })
+});
+// this is for generating button 
+generateBtn.addEventListener('click', randomColors);
+
+// this is for lock button open and close
+lockButtons.forEach((lockButton, i) => {
+    lockButton.addEventListener('click', e => {
+        lockedPanel(e, i);
+    })
+
+});
 
 
 //functions and variables 
@@ -71,6 +97,9 @@ function randomColors() {
         const hexText = colorDiv.children[0];
         //console.log(hexText)
         const randomColor = generatehex();
+        // here if the lock is on it means there is a classlist of locked and we dont want to add new color to that column so we make a if else statement
+
+
         // add it to initialColors aray
         //console.log(randomColor.hex());
 
@@ -79,15 +108,32 @@ function randomColors() {
 
         // add the color to the background
 
-        colorDiv.style.backgroundColor = randomColor;
-        hexText.innerHTML = randomColor;
-        initialColors.push(hexText.innerHTML);
+
+        if (colorDiv.classList.contains('locked')) {
+            initialColors.push(hexText.innerHTML);
+            return;
+
+
+        } else {
+            colorDiv.style.backgroundColor = randomColor;
+            hexText.innerHTML = randomColor;
+            initialColors.push(hexText.innerHTML);
+
+        }
+
+
+
         //console.log(hexText.innerHTML)
         // check for contrast
         checkTextContrast(randomColor, hexText);
         // initial colorize sliders
 
         const color = chroma(randomColor);
+        const icons = colorDiv.querySelectorAll('.controls button');
+
+        for (icon of icons) {
+            checkTextContrast(color, icon)
+        }
         const sliders = colorDiv.querySelectorAll('.sliders input');
         // console.log(sliders)
         // gives the nodelist
@@ -210,7 +256,28 @@ function copyToClipboard(currentHex) {
 
 }
 
+function openAdjustmentPanel(i) {
+    sliderContainers[i].classList.toggle('active');
 
+}
+function closeAdjustmentPanel(i) {
+
+    sliderContainers[i].classList.remove('active');
+}
+
+function lockedPanel(e, i) {
+    const lockSVG = e.target.children[0];
+    const activeBg = colorDivs[i];
+    activeBg.classList.toggle('locked');
+
+    if (lockSVG.classList.contains('fa-lock-open')) {
+        e.target.innerHTML = '<i class="fas fa-lock"></i>';
+    } else {
+        e.target.innerHTML = '<i class="fas fa-lock-open"></i>';
+    }
+
+
+}
 
 
 
