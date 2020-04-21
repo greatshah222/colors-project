@@ -11,6 +11,9 @@ const closeAdjustments = document.querySelectorAll('.close-adjustment');
 const sliderContainers = document.querySelectorAll('.sliders');
 const lockButtons = document.querySelectorAll('.lock');
 
+//for local storage
+let savedPalettes = [];
+
 
 // event listener
 
@@ -267,6 +270,7 @@ function closeAdjustmentPanel(i) {
 
 function lockedPanel(e, i) {
     const lockSVG = e.target.children[0];
+    console.log(e.target)
     const activeBg = colorDivs[i];
     activeBg.classList.toggle('locked');
 
@@ -284,6 +288,67 @@ function lockedPanel(e, i) {
 
 
 
+// implement save to palerre and local storage stuff
+const saveBtn = document.querySelector('.save');
+const submitSave = document.querySelector('.submit-save');
+const closeSave = document.querySelector('.close-save');
+const saveContainer = document.querySelector('.save-container');
+const saveInput = document.querySelector('.save-container input');
+
+// event listener 
+saveBtn.addEventListener('click', openPalette);
+closeSave.addEventListener('click', closePalette);
+
+submitSave.addEventListener('click', savePalette);
+
+
+
+
+function openPalette(e) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.add('active');
+    popup.classList.add('active');
+    saveInput.focus();
+}
+
+function closePalette(e) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+
+}
+function savePalette(e) {
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+
+    const colors = [];
+    currentHexes.forEach(currentHex => {
+        colors.push(currentHex.innerText);
+        console.log(colors)
+
+    });
+    // generate the object 
+
+    let paletteNr = savedPalettes.length;
+    const paletteObj = { name, colors, nr: paletteNr };
+    savedPalettes.push(paletteObj);
+    console.log(savedPalettes);
+    // save to local storage
+    savetoLocal(paletteObj);
+    saveInput.value = "";
+    saveInput.focus();
+}
+
+function savetoLocal(paletteObj) {
+    let localPalettes;
+    if (localStorage.getItem('palettes') === null) {
+        localPalettes = [];
+    } else {
+        localPalettes = JSON.parse(localStorage.getItem('palettes'));
+    }
+    localPalettes.push(paletteObj);
+    localStorage.setItem('palettes', JSON.stringify(localPalettes));
+}
 
 
 

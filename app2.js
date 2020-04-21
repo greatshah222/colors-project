@@ -1,7 +1,18 @@
 const colorDivs = document.querySelectorAll('.color');
-const gererateBtn = document.querySelector('.generate');
+const generateBtn = document.querySelector('.generate');
 const sliders = document.querySelectorAll('input[type="range"]');
+const lockButtons = document.querySelectorAll('.lock');
 let initialColors;
+const currentHexes = document.querySelectorAll('.color h2');
+const popup = document.querySelector('.copy-container');
+const adjustButtons = document.querySelectorAll('.adjust');
+const closeAdjustments = document.querySelectorAll('.close-adjustment');
+const sliderContainers = document.querySelectorAll('.sliders');
+// local storage and stuff
+let savedPalettes = [];
+
+
+// event listener
 
 sliders.forEach(slider => {
     slider.addEventListener('input', hslControls)
@@ -12,6 +23,48 @@ colorDivs.forEach((colorDiv, i) => {
     colorDiv.addEventListener('change', () => updateTextUI(i));
 
 });
+
+// for generate Button 
+generateBtn.addEventListener('click', randomColors);
+
+// for lock button
+lockButtons.forEach((lockButton, i) => {
+    lockButton.addEventListener('click', e => {
+        lockedPanel(e, i);
+
+    });
+
+});
+// for copy clipboard
+currentHexes.forEach(currentHex => {
+    currentHex.addEventListener('click', () => copyToClipboard(currentHex)
+    );
+});
+// after transition end popup box close
+popup.addEventListener('transitionend', () => {
+    const popupBox = popup.children[0];
+    popupBox.classList.remove('active');
+    popup.classList.remove('active');
+})
+// adjust button
+adjustButtons.forEach((adjustButton, i) => {
+    adjustButton.addEventListener('click', () => {
+        openAdjustmentPanel(i);
+
+    })
+
+});
+closeAdjustments.forEach((closeAdjustment, i) => {
+    closeAdjustment.addEventListener('click', () => {
+        closeAdjustmentPanel(i);
+
+
+
+    })
+});
+
+
+// functions 
 function generatehex() {
     const hexColor = chroma.random();
     return hexColor;
@@ -23,15 +76,21 @@ function randomColors() {
     colorDivs.forEach(colorDiv => {
         const hexText = colorDiv.children[0];
         const randomColor = generatehex();
+        if (colorDiv.classList.contains('locked')) {
+            initialColors.push(hexText.innerHTML);
+
+            return;
+
+        } else {
+            colorDiv.style.backgroundColor = randomColor;
+            hexText.innerHTML = randomColor;
+            initialColors.push(hexText.innerHTML);
+
+        }
 
 
-        colorDiv.style.backgroundColor = randomColor;
-        hexText.innerHTML = randomColor;
-        initialColors.push(hexText.innerHTML);
-        console.log(hexText.innerHTML)
 
 
-        console.log(initialColors);
         checkTextContrast(randomColor, hexText);
 
         const color = chroma(randomColor);
@@ -108,4 +167,99 @@ function updateTextUI(i) {
     }
 
 }
+
+function lockedPanel(e, i) {
+    lockImage = e.target.children[0];
+    //console.log(lockImage)
+    colorDivs[i].classList.toggle('locked');
+    if (lockImage.classList.contains('fa-lock-open')) {
+        e.target.innerHTML = '<i class="fas fa-lock"></i>';
+    } else {
+        e.target.innerHTML = '<i class="fas fa-lock-open"></i>';
+    }
+
+
+
+
+
+
+
+}
+
+
+
+function copyToClipboard(currentHex) {
+    const el = document.createElement('textarea');
+    el.value = currentHex.innerText;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    const popupBox = popup.children[0];
+    popupBox.classList.add('active');
+    popup.classList.add('active');
+
+
+}
+
+function openAdjustmentPanel(i) {
+    sliderContainers[i].classList.toggle('active');
+}
+function closeAdjustmentPanel(i) {
+    sliderContainers[i].classList.remove('active');
+}
+// Implement save to palette and local storage stuff
+saveBtn = document.querySelector('.save');
+saveContainer = document.querySelector('.save-container');
+submitSave = document.querySelector('.submit-save');
+closeSave = document.querySelector('.close-save');
+const saveInput = document.querySelector('.save-container input');
+// event listener for save
+
+saveBtn.addEventListener('click', openPalette);
+submitSave.addEventListener('click', savePalette);
+closeSave.addEventListener('click', closePalette);
+
+// function for save 
+function openPalette(e) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.add('active');
+    popup.classList.add('active');
+    saveInput.focus();
+
+
+
+}
+
+function closePalette(e) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+
+
+}
+function savePalette(e) {
+    const popup = saveContainer.children[0];
+    saveContainer.classList.remove('active');
+    popup.classList.remove('active');
+    let colors = [];
+    currentHexes.forEach(currentHex => {
+        colors.push(currentHex.innerText);
+
+    });
+    let paletteNr = savedPalettes.length;
+    paletteObj = { name, colors, nr: paletteNr };
+    console.log(paletteObj);
+    savedPalettes.push(paletteObj);
+    // now we need to save to local storage
+
+
+
+}
+
+
+
+
+
 randomColors();
