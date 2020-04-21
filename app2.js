@@ -243,18 +243,35 @@ function savePalette(e) {
     const popup = saveContainer.children[0];
     saveContainer.classList.remove('active');
     popup.classList.remove('active');
+    const name = saveInput.value;
     let colors = [];
     currentHexes.forEach(currentHex => {
         colors.push(currentHex.innerText);
 
     });
     let paletteNr = savedPalettes.length;
-    paletteObj = { name, colors, nr: paletteNr };
+    const paletteObj = { name, colors, nr: paletteNr };
     console.log(paletteObj);
     savedPalettes.push(paletteObj);
     // now we need to save to local storage
+    savetoLocal(paletteObj);
+    saveInput.value = "";
+    saveInput.focus();
 
 
+}
+
+// actual local storage function
+function savetoLocal(paletteObj) {
+    let localPalettes;
+    if (localStorage.getItem('palettes') === null) {
+        localPalettes = [];
+    } else {
+        localPalettes = JSON.parse(localStorage.getItem('palettes'));
+    }
+    console.log(localPalettes);
+    localPalettes.push(paletteObj);
+    localStorage.setItem('palettes', JSON.stringify(localPalettes));
 
 }
 
