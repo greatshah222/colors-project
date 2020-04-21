@@ -4,6 +4,7 @@ const generateBtn = document.querySelector('.generate');
 // selecting the type only with the range and not text
 const sliders = document.querySelectorAll('input[type="range"]');
 const currentHexes = document.querySelectorAll('.color h2');
+const popup = document.querySelector('.copy-container');
 let initialColors;
 
 // event listener
@@ -19,7 +20,17 @@ colorDivs.forEach((colorDiv, i) => {
     })
 
 });
-
+currentHexes.forEach(currentHex => {
+    currentHex.addEventListener('click', () => {
+        copyToClipboard(currentHex);
+    })
+});
+// this below event listener is to remove the classlist of active where opacity whill be 0 and this happens after the transition ends in our css of  .copy-popup in css file 
+popup.addEventListener('transitionend', () => {
+    const popupBox = popup.children[0];
+    popupBox.classList.remove('active');
+    popup.classList.remove('active');
+})
 
 
 //functions and variables 
@@ -62,7 +73,7 @@ function randomColors() {
         const randomColor = generatehex();
         // add it to initialColors aray
         //console.log(randomColor.hex());
-        initialColors.push(randomColor.hex());
+
         //console.log(initialColors)
 
 
@@ -70,6 +81,8 @@ function randomColors() {
 
         colorDiv.style.backgroundColor = randomColor;
         hexText.innerHTML = randomColor;
+        initialColors.push(hexText.innerHTML);
+        //console.log(hexText.innerHTML)
         // check for contrast
         checkTextContrast(randomColor, hexText);
         // initial colorize sliders
@@ -149,6 +162,12 @@ function hslControls(e) {
 
     colorDivs[index].style.backgroundColor = color;
 
+    // colorize input
+    colorizeSliders(color, hue, brightness, saturation);
+
+
+
+
 
 
 
@@ -156,20 +175,36 @@ function hslControls(e) {
 }
 
 function updateTextUI(i) {
-    const activeDiv = colorDivs[i];
-    const color = chroma(activeDiv.style.backgroundColor);
-    //console.log(color.hex());
-
-    //console.log(activeDiv);
-    const textHex = activeDiv.querySelector('h2');
-    //console.log(textHex)
-    const icons = activeDiv.querySelectorAll('.controls button');
-    textHex.innerText = color.hex();
+    console.log(colorDivs[i])
+    const textHex = colorDivs[i].querySelector('h2');
+    color = colorDivs[i].style.backgroundColor;
+    textHex.innerHTML = chroma(color).hex();
+    const icons = colorDivs[i].querySelectorAll('.controls button');
+    console.log(icons)
     // check contrast
     checkTextContrast(color, textHex);
     for (icon of icons) {
         checkTextContrast(color, icon)
     }
+
+
+
+}
+
+function copyToClipboard(currentHex) {
+    const el = document.createElement('textarea');
+    el.value = currentHex.innerText;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+
+    // popup animation and for the animation we are adding active class to both and here children[0] refers to actual popup container in index.html
+
+    const popupBox = popup.children[0];
+    popupBox.classList.add('active');
+    popup.classList.add('active');
+
 
 
 
