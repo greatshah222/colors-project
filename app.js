@@ -247,6 +247,7 @@ function resetInputs() {
         if (slider.name === 'hue') {
             const hueColor = initialColors[slider.getAttribute('data-hue')];
             const hueValue = chroma(hueColor).hsl()[0];
+            console.log(hueValue)
             slider.value = Math.floor(hueValue);
         }
         if (slider.name === 'saturation') {
